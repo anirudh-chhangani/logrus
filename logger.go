@@ -301,6 +301,40 @@ func (logger *Logger) Panicln(args ...interface{}) {
 	}
 }
 
+func (logger *Logger) SetOutput(out io.Writer) {
+	logger.mu.Lock()
+	defer logger.mu.Unlock()
+	logger.Out = out
+}
+
+// SetFormatter sets the logger formatter.
+func (logger *Logger) SetFormatter(formatter Formatter) {
+	logger.mu.Lock()
+	defer logger.mu.Unlock()
+	logger.Formatter = formatter
+}
+
+// SetLevel sets the logger level.
+func (logger *Logger) SetLevel(level Level) {
+	logger.mu.Lock()
+	defer logger.mu.Unlock()
+	logger.setLevel(level)
+}
+
+// GetLevel returns the logger level.
+func (logger *Logger) GetLevel() Level {
+	logger.mu.Lock()
+	defer logger.mu.Unlock()
+	return logger.level()
+}
+
+// AddHook adds a hook to the logger hooks.
+func (logger *Logger) AddHook(hook Hook) {
+	logger.mu.Lock()
+	defer logger.mu.Unlock()
+	logger.Hooks.Add(hook)
+}
+
 //When file is opened with appending mode, it's safe to
 //write concurrently to a file (within 4k message on Linux).
 //In these cases user can choose to disable the lock.
